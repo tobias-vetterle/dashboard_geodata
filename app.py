@@ -266,16 +266,6 @@ if __name__ == '__main__':
 
 
 
-# To Do
-# 
-# - App als .py-Datei speichern und testen - DONE
-# - Datenaufbereitung entfernen und App direkt mit import der CSV beginnen lassen
-
-# - App deployen
-#   - Problem: Geht bei mir bekannten Hostern nur mit pip environments, ich brauche aber conda wegen der installation von geopandas
-#   - Deshalb: Neue env mit pip bauen
-# - Einbindung via iframe testen
-
 
 
 
