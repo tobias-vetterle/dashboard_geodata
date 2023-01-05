@@ -9,7 +9,7 @@ from dash import html
 from dash import Dash
 from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
-import geopandas as gp
+# import geopandas as gp
 import numpy as np
 
 

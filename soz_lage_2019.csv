@@ -1,21 +1,4 @@
-Kommune;GKZ;ARS;Bundesland;Landkreis;Demografietyp;"2019
-Einpersonen-Haushalte (%)";"2019
-Haushalte mit Kindern (%)";"2019
-Wohnfläche pro Person (m2)";"2019
-Wohnungen in Ein-/Zweifamilienhäusern (%)";"2019
-Kaufkraft (Euro/Haushalt)";"2019
-Haushalte mit niedrigem Einkommen (%)";"2019
-Haushalte mit mittlerem Einkommen (%)";"2019
-Haushalte mit hohem Einkommen (%)";"2019
-Arbeitslose an den SvB (%)";"2019
-Arbeitslose an den ausländischen SvB (%)";"2019
-Arbeitslose an den SvB unter 25 Jahren (%)";"2019
-Kinderarmut (%)";"2019
-Jugendarmut (%)";"2019
-Altersarmut (%)";"2019
-SGB II-Quote (%)";"2019
-ALG II-Quote (%)";"2019
-Breitbandversorgung - Private Haushalte (%)"
+Kommune;GKZ;ARS;Bundesland;Landkreis;Demografietyp;2019 Einpersonen-Haushalte (%);2019 Haushalte mit Kindern (%);2019 Wohnfläche pro Person (m2);2019 Wohnungen in Ein-/Zweifamilienhäusern (%);2019 Kaufkraft (Euro/Haushalt);2019 Haushalte mit niedrigem Einkommen (%);2019 Haushalte mit mittlerem Einkommen (%);2019 Haushalte mit hohem Einkommen (%);2019 Arbeitslose an den SvB (%);2019 Arbeitslose an den ausländischen SvB (%);2019 Arbeitslose an den SvB unter 25 Jahren (%);2019 Kinderarmut (%);2019 Jugendarmut (%);2019 Altersarmut (%);2019 SGB II-Quote (%);2019 ALG II-Quote (%);2019 Breitbandversorgung - Private Haushalte (%)
 Aachen;5334002;53340002002;Nordrhein-Westfalen;Städteregion Aachen;Typ 7;58,1;25;40,2;24;39.433;51,2;32,6;16,2;10;19,8;7,2;21,3;17,8;6,9;11,5;9,6;99
 Aalen;8136088;81365001088;Baden-Württemberg;Ostalbkreis, LK;Typ 5;44,2;28,2;43,7;56,2;51.414;39,8;38,1;22;3,9;8,6;3,6;7;4,1;2,1;4,1;3,4;95
 Aarbergen;6439001;64390001001;Hessen;Rheingau-Taunus-Kreis, LK;Typ 3;34,3;32,1;51;71,8;51.422;40,9;34,2;24,9;6,4;k.A.;5,7;12,5;9,5;1,8;7,5;6,3;92
