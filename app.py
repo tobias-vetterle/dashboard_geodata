@@ -11,12 +11,12 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import geopandas as gp
 import numpy as np
-
+import json
 
 # from jupyter_dash import JupyterDash
 # from openpyxl import Workbook
 # import ogr
-# import json
+
 # import pyproj
 # import plotly.io as pio
 
@@ -24,7 +24,8 @@ import numpy as np
 df_soz = pd.read_csv("soz_lage_2019.csv", encoding='ISO-8859-1', sep=';')
 # utf-8-sig
 # Geodaten einlesen
-geo_df = gp.read_file('gemeinden_simplify200.geojson', encoding="ISO-8859-1")
+geo_df = json.load("gemeinden_simplify200.geojson")
+#geo_df = gp.read_file('gemeinden_simplify200.geojson', encoding="ISO-8859-1")
 # geo_df.to_csv("geo_df.csv", sep=';', encoding='utf-8-sig')
 
 # Daten vorbereiten
