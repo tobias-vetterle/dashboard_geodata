@@ -21,7 +21,8 @@ import numpy as np
 # import plotly.io as pio
 
 # Sozialdaten einlesen
-df_soz = pd.read_csv("soz_lage_2019.csv", encoding='utf-8-sig', sep=';')
+df_soz = pd.read_csv("soz_lage_2019.csv", encoding='ISO-8859-1', sep=';')
+# utf-8-sig
 # Geodaten einlesen
 geo_df = gp.read_file('gemeinden_simplify200.geojson', encoding="ISO-8859-1")
 # geo_df.to_csv("geo_df.csv", sep=';', encoding='utf-8-sig')
@@ -34,7 +35,6 @@ df_soz2 = df_soz[['Kommune', 'Landkreis', '2019 Kinderarmut (%)',
   '2019 SGB II-Quote (%)',
   '2019 ALG II-Quote (%)',
   '2019 Haushalte mit niedrigem Einkommen (%)',
-  'geometry'
                   ]]
 
 df_soz3 = df_soz2.copy(deep=True)
@@ -53,7 +53,7 @@ df_soz3.loc[df_soz3["2019 Altersarmut (%)"] == 'k.A.', "2019 Altersarmut (%)"] =
 df_soz3.loc[df_soz3["2019 SGB II-Quote (%)"] == 'k.A.', "2019 SGB II-Quote (%)"] = np.nan
 df_soz3.loc[df_soz3["2019 ALG II-Quote (%)"] == 'k.A.', "2019 ALG II-Quote (%)"] = np.nan
 df_soz3.loc[df_soz3['2019 Haushalte mit niedrigem Einkommen (%)'] == 'k.A.', '2019 Haushalte mit niedrigem Einkommen (%)'] = np.nan
-df_soz3.loc[df_soz3['geometry'] == '', 'nan'] = np.nan
+
 
 df_soz3.drop(df_soz3.tail(7).index,inplace=True)
 
@@ -68,12 +68,10 @@ df_soz3.astype({"2019 Kinderarmut (%)": 'float64',
 
 # df_soz3.to_csv("df_soz3.csv", sep=';', encoding='utf-8-sig')
 
-df_soz4 = df_soz3.drop(columns = ["nan", "geometry"])
-# df_soz4.info()
 
 # shapefile und Daten mergen
 
-geo_df = pd.merge(left=geo_df, right=df_soz4[["Kommune", "Landkreis", '2019 SGB II-Quote (%)', "2019 Kinderarmut (%)", "2019 Jugendarmut (%)", "2019 Altersarmut (%)", "2019 ALG II-Quote (%)", "2019 Haushalte mit niedrigem Einkommen (%)"]], left_on="GEN", right_on="Kommune", how="left")#.dropna()
+geo_df = pd.merge(left=geo_df, right=df_soz3[["Kommune", "Landkreis", '2019 SGB II-Quote (%)', "2019 Kinderarmut (%)", "2019 Jugendarmut (%)", "2019 Altersarmut (%)", "2019 ALG II-Quote (%)", "2019 Haushalte mit niedrigem Einkommen (%)"]], left_on="GEN", right_on="Kommune", how="left")#.dropna()
 geo_df = geo_df.set_index("GEN")
 geo_df['2019 SGB II-Quote (%)'] = geo_df['2019 SGB II-Quote (%)'].astype("float")
 geo_df['2019 Kinderarmut (%)'] = geo_df['2019 Kinderarmut (%)'].astype("float")
