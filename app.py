@@ -2,7 +2,7 @@
 # coding: utf-8
 
 import pandas as pd
-import plotly
+# import plotly
 import plotly.express as px
 from dash import dcc
 from dash import html
@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output
 import dash_bootstrap_components as dbc
 import geopandas as gp
 import numpy as np
-import json
+# import json
 
 # from jupyter_dash import JupyterDash
 # from openpyxl import Workbook
@@ -21,11 +21,11 @@ import json
 # import plotly.io as pio
 
 # Sozialdaten einlesen
-df_soz = pd.read_csv("soz_lage_2019.csv", encoding='ISO-8859-1', sep=';')
+df_soz = pd.read_csv("soz_lage_2019.csv", encoding='utf-8-sig', sep=';')
 # utf-8-sig
 # Geodaten einlesen
-geo_df = json.load("gemeinden_simplify200.geojson")
-#geo_df = gp.read_file('gemeinden_simplify200.geojson', encoding="ISO-8859-1")
+# geo_df = json.loads("gemeinden_simplify200.geojson")
+geo_df = gp.read_file('gemeinden_simplify200.geojson', encoding="ISO-8859-1")
 # geo_df.to_csv("geo_df.csv", sep=';', encoding='utf-8-sig')
 
 # Daten vorbereiten
@@ -65,7 +65,7 @@ df_soz3.astype({"2019 Kinderarmut (%)": 'float64',
                            "2019 ALG II-Quote (%)": 'float64',
                            '2019 Haushalte mit niedrigem Einkommen (%)': 'float64',
                          })\
-    #.info()
+    .info()
 
 # df_soz3.to_csv("df_soz3.csv", sep=';', encoding='utf-8-sig')
 
