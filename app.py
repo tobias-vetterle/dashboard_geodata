@@ -99,6 +99,8 @@ external_stylesheets = [dbc.themes.SPACELAB]
 
 app = Dash(__name__, external_stylesheets=external_stylesheets)
 
+server = app.server
+
 landkreise = df_soz3['Landkreis'].unique()
 
 header = html.H4("Sozialdaten auf Gemeindeebene, 2019",
