@@ -125,6 +125,8 @@ dropdown = html.Div(
     className="mb-4",
 )
 
+# TODO add text field: " ... So beträgt der Abstand zwischen der Gemeinde mit der höchsten und der niedrigsten SGB II Quote im Landkreis "Name" [X] Prozentpunkte und liegt damit [Y] Prozentpunkte über/unter dem deutschen  Durchschnitt
+
 fig = html.Div(
     [dcc.Graph
         (
@@ -158,6 +160,9 @@ fig4 = html.Div(
     ),
     ],
 )
+
+# TODO add graph showing distance between min / max values of each Landkreis of the respective Bundesland
+
 
 # layout
 
@@ -288,6 +293,6 @@ def update_graph(selected_region):
 
 
 if __name__ == '__main__':
-    app.run_server()
+    app.run_server(debug=True)
 
 # mode='external', port=3003
