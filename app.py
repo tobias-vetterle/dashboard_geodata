@@ -115,10 +115,11 @@ dropdown = html.Div(
         dbc.Label("Wählen Sie einen Landkreis aus (Texteingabe möglich):"),
         dcc.Dropdown(
             df_soz3['Landkreis'].unique(),
+            value="Roth, LK",
             id='dropdown'
         ),
     ], style={
-        'width': '28%',
+        'width': '50%',
         'display': 'inline-block'
     },
     className="mb-4",
