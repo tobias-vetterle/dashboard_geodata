@@ -97,7 +97,11 @@ geo_df['2019 Haushalte mit niedrigem Einkommen (%)'] = geo_df['2019 Haushalte mi
 
 external_stylesheets = [dbc.themes.SPACELAB]
 
-app = Dash(__name__, external_stylesheets=external_stylesheets)
+app = Dash(__name__,
+           external_stylesheets=external_stylesheets,
+           #meta_tags=[{'name': 'viewport',
+           #            'content': 'width=device_width, initial-scale=1.0, maximum-scale=1.2, minimum-scale=0.5'}]
+           )
 
 server = app.server
 
@@ -125,7 +129,8 @@ fig = html.Div(
         (
         id='example-graph',
         config={'displayModeBar': True},
-        style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
+        #style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
+        style={'height': '40vh'},
     ),
     ],
 )
@@ -135,7 +140,8 @@ fig3 = html.Div(
         (
         id='example-graph3',
         config={'displayModeBar': True},
-        style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
+        #style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
+        style={'height': '40vh'},
     ),
     ],
 )
@@ -145,7 +151,9 @@ fig4 = html.Div(
         (
         id='example-graph4',
         config={'displayModeBar': True},
-        style={'width': '80vh', 'height': '70vh', 'display': 'inline-block'}
+        #style={'width': '80vh', 'height': '70vh', 'display': 'inline-block'}
+        style={'height': '70vh'}
+
     ),
     ],
 )
@@ -163,11 +171,13 @@ app.layout = dbc.Container(
             (
             [
                 dbc.Col([input_and_map],
-                        width=6,
+                        #width=6,
+                        xs=10, sm=8, md=5, lg=6, xl=5,
                         style={"height": "100%"}
                         ),
                 dbc.Col([charts],
-                        width=6,
+                        #width=6,
+                        xs=10, sm=8, md=5, lg=6, xl=5,
                         style={"height": "100%"}
                         ),
             ],
@@ -220,6 +230,12 @@ def update_graph(selected_region):
         font_family="Courier New, monospace",
         title_font_family="Courier New, monospace",
         plot_bgcolor="#ffffff",
+        legend=dict(
+            orientation="h",
+            y=-0.3,
+            xanchor="right",
+            x=1
+                   )
     )
 
     fig.update_yaxes(type='linear')
@@ -235,6 +251,12 @@ def update_graph(selected_region):
         font_family="Courier New, monospace",
         title_font_family="Courier New, monospace",
         plot_bgcolor="#ffffff",
+        legend=dict(
+            orientation="h",
+            y=-0.3,
+            xanchor="right",
+            x=1
+        )
     )
 
     fig3.update_yaxes(type='linear')
@@ -250,6 +272,14 @@ def update_graph(selected_region):
         font_family="Courier New, monospace",
         title_font_family="Courier New, monospace",
     )
+
+    fig4.update_coloraxes(colorbar_orientation="h",
+                          colorbar_x=1,
+                          colorbar_xanchor="right",
+                          colorbar_y=-0.3,
+                          colorbar_title_side="top",
+                          colorbar_thickness=10
+                          )
 
     fig4.update_geos(fitbounds="locations", visible=False)
 
