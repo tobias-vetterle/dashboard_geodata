@@ -76,7 +76,7 @@ df_soz3.astype({"2019 Kinderarmut (%)": 'float64',
 geo_df = pd.merge(left=geo_df, right=df_soz3[
     ["Kommune", "Landkreis", '2019 SGB II-Quote (%)', "2019 Kinderarmut (%)", "2019 Jugendarmut (%)",
      "2019 Altersarmut (%)", "2019 ALG II-Quote (%)", "2019 Haushalte mit niedrigem Einkommen (%)"]], left_on="GEN",
-                  right_on="Kommune", how="left")  # .dropna()
+                  right_on="Kommune", how="left")
 geo_df = geo_df.set_index("GEN")
 geo_df['2019 SGB II-Quote (%)'] = geo_df['2019 SGB II-Quote (%)'].astype("float")
 geo_df['2019 Kinderarmut (%)'] = geo_df['2019 Kinderarmut (%)'].astype("float")
@@ -94,6 +94,7 @@ geo_df['2019 Haushalte mit niedrigem Einkommen (%)'] = geo_df['2019 Haushalte mi
 
 
 # App
+# TODO Anregungen für Weiterentwicklung hier: https://dash.gallery/dash-food-consumption/
 
 external_stylesheets = [dbc.themes.SPACELAB]
 
@@ -170,6 +171,9 @@ input_and_map = dbc.Card([dropdown, fig4], body=True)
 
 charts = dbc.Card([fig, fig3], body=True)
 
+# In order to develop our layout very easily, we used two types of flexible containers from the dash_bootstrap_components(dbc)
+# library: dbc.Card & dbc.Container:
+
 app.layout = dbc.Container(
     [
         header,
@@ -224,14 +228,19 @@ def update_graph(selected_region):
                     "2019 ALG II-Quote (%)": 'float64',
                     '2019 Haushalte mit niedrigem Einkommen (%)': 'float64',
                     })
-
+# manually specifying labels: https://plotly.com/python/figure-labels/
     fig = px.bar(dff,
                  x="Landkreis",
                  y="2019 Kinderarmut (%)",
                  color="Kommune",
                  barmode="group",
-                 color_discrete_sequence=px.colors.sequential.Viridis)
+                 color_discrete_sequence=px.colors.sequential.Viridis,
+                 labels={
+                     "Kommune": "Gemeinden"
+                        },
+                 )
 
+# overview on methods for defining layout: https://plotly.com/python/reference/layout/
     fig.update_layout(
         font_family="Courier New, monospace",
         title_font_family="Courier New, monospace",
@@ -251,12 +260,17 @@ def update_graph(selected_region):
                   y='2019 Haushalte mit niedrigem Einkommen (%)',
                   color="Kommune",
                   barmode="group",
-                  color_discrete_sequence=px.colors.sequential.Viridis)
+                  color_discrete_sequence=px.colors.sequential.Viridis,
+                  labels={
+                      "Kommune": "Gemeinden"
+                  },
+                  )
 
     fig3.update_layout(
         font_family="Courier New, monospace",
         title_font_family="Courier New, monospace",
         plot_bgcolor="#ffffff",
+# legend positioning and tweaking: https://plotly.com/python/legend/?_ga=2.205267728.1447699042.1673006461-1475463668.1670716474#legend-position, https://plotly.com/python/reference/?_ga=2.205267728.1447699042.1673006461-1475463668.1670716474#layout-legend
         legend=dict(
             orientation="h",
             y=-0.3,
@@ -267,6 +281,7 @@ def update_graph(selected_region):
 
     fig3.update_yaxes(type='linear')
 
+# basics on creating maps: https://plotly.com/python/map-configuration/
     fig4 = px.choropleth(geo_dff,
                          geojson=geo_dff.geometry,
                          locations=geo_dff.index,
@@ -279,6 +294,7 @@ def update_graph(selected_region):
         title_font_family="Courier New, monospace",
     )
 
+# tweaking coloraxis of choropleth map: # https://stackoverflow.com/questions/68174188/update-colorbar-coloraxis-position-plotly-python, https://plotly.com/python/reference/layout/coloraxis/
     fig4.update_coloraxes(colorbar_orientation="h",
                           colorbar_x=1,
                           colorbar_xanchor="right",
