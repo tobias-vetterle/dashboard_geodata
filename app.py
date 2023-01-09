@@ -76,6 +76,7 @@ df_soz3.astype({"2019 Kinderarmut (%)": 'float64',
 
 
 # shapefile und Daten mergen
+# TODO anderes shapefile teste, da Platzierung der Gemeinden in manchen LK nicht korrekt
 
 geo_df = pd.merge(left=geo_df, right=df_soz3[
     ["Kommune", "Landkreis", '2019 SGB II-Quote (%)', "2019 Kinderarmut (%)", "2019 Jugendarmut (%)",
@@ -122,8 +123,7 @@ landkreise = df_soz3['Landkreis'].unique()
 header = html.H4("Sozialdaten auf Gemeindeebene, 2019",
                  className="bg-primary text-white p-3 mb-2 text-center")
 
-# TODO add text field: " ... So beträgt der Abstand zwischen der Gemeinde mit der höchsten und der niedrigsten SGB II Quote im Landkreis "Name" [X] Prozentpunkte und liegt damit [Y] Prozentpunkte über/unter dem deutschen  Durchschnitt
-
+# TODO dot plot ergänzen
 
 dropdown = html.Div(
     [
