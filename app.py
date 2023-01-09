@@ -100,8 +100,6 @@ external_stylesheets = [dbc.themes.SPACELAB]
 
 app = Dash(__name__,
            external_stylesheets=external_stylesheets,
-           #meta_tags=[{'name': 'viewport',
-           #            'content': 'width=device_width, initial-scale=1.0, maximum-scale=1.2, minimum-scale=0.5'}]
            )
 
 server = app.server
@@ -110,6 +108,28 @@ landkreise = df_soz3['Landkreis'].unique()
 
 header = html.H4("Sozialdaten auf Gemeindeebene, 2019",
                  className="bg-primary text-white p-3 mb-2 text-center")
+
+# TODO add text field: " ... So beträgt der Abstand zwischen der Gemeinde mit der höchsten und der niedrigsten SGB II Quote im Landkreis "Name" [X] Prozentpunkte und liegt damit [Y] Prozentpunkte über/unter dem deutschen  Durchschnitt
+# # working template for text card (for later use)
+# minmax_card = html.Div(
+#                       [
+#                           dbc.Card(
+#                             dbc.CardBody(
+#                 [
+#                     html.H4("Auf einen Blick", className="card-title"),
+#                     html.P(
+#                         "Some quick example text to build on the card title and "
+#                         "make up the bulk of the card's content.",
+#                         className="card-text",
+#                     ),
+#                 ],
+#     style = {"width": "18rem"}
+#             )
+#                         id="minmax_text",
+#                           )
+#                       ]
+# )
+
 
 dropdown = html.Div(
     [
@@ -126,7 +146,6 @@ dropdown = html.Div(
     className="mb-4",
 )
 
-# TODO add text field: " ... So beträgt der Abstand zwischen der Gemeinde mit der höchsten und der niedrigsten SGB II Quote im Landkreis "Name" [X] Prozentpunkte und liegt damit [Y] Prozentpunkte über/unter dem deutschen  Durchschnitt
 
 fig = html.Div(
     [dcc.Graph
@@ -166,13 +185,14 @@ fig4 = html.Div(
 
 
 # layout
+# In order to develop our layout very easily, we used two types of flexible containers from the dash_bootstrap_components(dbc)
+# library: dbc.Card & dbc.Container:
 
-input_and_map = dbc.Card([dropdown, fig4], body=True)
+input_and_map = dbc.Card([dropdown, minmax_card, fig4], body=True)
 
 charts = dbc.Card([fig, fig3], body=True)
 
-# In order to develop our layout very easily, we used two types of flexible containers from the dash_bootstrap_components(dbc)
-# library: dbc.Card & dbc.Container:
+
 
 app.layout = dbc.Container(
     [
@@ -204,7 +224,8 @@ app.layout = dbc.Container(
     [
         Output(component_id='example-graph', component_property='figure'),
         Output(component_id='example-graph3', component_property='figure'),
-        Output(component_id='example-graph4', component_property='figure')
+        Output(component_id='example-graph4', component_property='figure'),
+        Output(component_id='minmax_text', component_property='children')
     ],
     Input(component_id='dropdown', component_property='value')
 )
@@ -305,7 +326,9 @@ def update_graph(selected_region):
 
     fig4.update_geos(fitbounds="locations", visible=False)
 
-    return fig, fig3, fig4
+
+
+    return fig, fig3, fig4, minmax_card
 
 
 if __name__ == '__main__':
