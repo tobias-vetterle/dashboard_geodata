@@ -363,7 +363,7 @@ def update_graph(selected_region):
     min_col = geo_dff.loc[geo_dff[col].idxmin()]
     min_gem = min_col["Kommune"]
     min_val = min_col["2019 SGB II-Quote (%)"].astype(float)
-    range_val = (max_val) - (min_val)
+    range_val = round((max_val) - (min_val), 1)
 
 # writing the results in a statement to be passed on towards the dynamic html component
 
