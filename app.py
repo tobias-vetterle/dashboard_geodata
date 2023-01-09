@@ -1,8 +1,12 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+###############
+# Preparation #
+###############
+
+# region Import libraries
 import pandas as pd
-# import plotly
 import plotly.express as px
 from dash import dcc
 from dash import html
@@ -12,15 +16,17 @@ import dash_bootstrap_components as dbc
 import geopandas as gp
 import numpy as np
 
+# import plotly
 # import json
-
 # from jupyter_dash import JupyterDash
 # from openpyxl import Workbook
 # import ogr
-
 # import pyproj
 # import plotly.io as pio
 
+# endregion
+
+# region read data
 # Sozialdaten einlesen
 df_soz = pd.read_csv("soz_lage_2019.csv", encoding='utf-8-sig', sep=';')
 # utf-8-sig
@@ -28,9 +34,9 @@ df_soz = pd.read_csv("soz_lage_2019.csv", encoding='utf-8-sig', sep=';')
 # geo_df = json.loads("gemeinden_simplify200.geojson")
 geo_df = gp.read_file('gemeinden_simplify200.geojson', encoding="ISO-8859-1")
 # geo_df.to_csv("geo_df.csv", sep=';', encoding='utf-8-sig')
+# endregion
 
-# Daten vorbereiten
-
+# region prepare data
 df_soz2 = df_soz[['Kommune', 'Landkreis', '2019 Kinderarmut (%)',
                   '2019 Jugendarmut (%)',
                   '2019 Altersarmut (%)',
@@ -46,16 +52,14 @@ df_soz3["2019 Jugendarmut (%)"] = df_soz3["2019 Jugendarmut (%)"].str.replace(',
 df_soz3["2019 Altersarmut (%)"] = df_soz3["2019 Altersarmut (%)"].str.replace(',', '.')
 df_soz3["2019 SGB II-Quote (%)"] = df_soz3["2019 SGB II-Quote (%)"].str.replace(',', '.')
 df_soz3["2019 ALG II-Quote (%)"] = df_soz3["2019 ALG II-Quote (%)"].str.replace(',', '.')
-df_soz3['2019 Haushalte mit niedrigem Einkommen (%)'] = df_soz3[
-    '2019 Haushalte mit niedrigem Einkommen (%)'].str.replace(',', '.')
+df_soz3['2019 Haushalte mit niedrigem Einkommen (%)'] = df_soz3['2019 Haushalte mit niedrigem Einkommen (%)'].str.replace(',', '.')
 
 df_soz3.loc[df_soz3["2019 Kinderarmut (%)"] == 'k.A.', "2019 Kinderarmut (%)"] = np.nan
 df_soz3.loc[df_soz3["2019 Jugendarmut (%)"] == 'k.A.', "2019 Jugendarmut (%)"] = np.nan
 df_soz3.loc[df_soz3["2019 Altersarmut (%)"] == 'k.A.', "2019 Altersarmut (%)"] = np.nan
 df_soz3.loc[df_soz3["2019 SGB II-Quote (%)"] == 'k.A.', "2019 SGB II-Quote (%)"] = np.nan
 df_soz3.loc[df_soz3["2019 ALG II-Quote (%)"] == 'k.A.', "2019 ALG II-Quote (%)"] = np.nan
-df_soz3.loc[df_soz3[
-                '2019 Haushalte mit niedrigem Einkommen (%)'] == 'k.A.', '2019 Haushalte mit niedrigem Einkommen (%)'] = np.nan
+df_soz3.loc[df_soz3['2019 Haushalte mit niedrigem Einkommen (%)'] == 'k.A.', '2019 Haushalte mit niedrigem Einkommen (%)'] = np.nan
 
 df_soz3.drop(df_soz3.tail(7).index, inplace=True)
 
@@ -75,8 +79,9 @@ df_soz3.astype({"2019 Kinderarmut (%)": 'float64',
 
 geo_df = pd.merge(left=geo_df, right=df_soz3[
     ["Kommune", "Landkreis", '2019 SGB II-Quote (%)', "2019 Kinderarmut (%)", "2019 Jugendarmut (%)",
-     "2019 Altersarmut (%)", "2019 ALG II-Quote (%)", "2019 Haushalte mit niedrigem Einkommen (%)"]], left_on="GEN",
-                  right_on="Kommune", how="left")
+     "2019 Altersarmut (%)", "2019 ALG II-Quote (%)", "2019 Haushalte mit niedrigem Einkommen (%)"]],
+    left_on="GEN", right_on="Kommune", how="left")
+
 geo_df = geo_df.set_index("GEN")
 geo_df['2019 SGB II-Quote (%)'] = geo_df['2019 SGB II-Quote (%)'].astype("float")
 geo_df['2019 Kinderarmut (%)'] = geo_df['2019 Kinderarmut (%)'].astype("float")
@@ -91,9 +96,14 @@ geo_df['2019 Haushalte mit niedrigem Einkommen (%)'] = geo_df['2019 Haushalte mi
 
 # geo_df = pd.read_csv("geo_df_merged.csv", encoding='utf-8-sig', sep=';')
 # df_soz3 = pd.read_csv("df_soz3.csv", encoding='utf-8-sig', sep=';')
+# endregion
 
 
-# App
+#######
+# App #
+#######
+
+# region init app
 # TODO Anregungen für Weiterentwicklung hier: https://dash.gallery/dash-food-consumption/
 
 external_stylesheets = [dbc.themes.SPACELAB]
@@ -106,29 +116,13 @@ server = app.server
 
 landkreise = df_soz3['Landkreis'].unique()
 
+# endregion
+
+# region create html components
 header = html.H4("Sozialdaten auf Gemeindeebene, 2019",
                  className="bg-primary text-white p-3 mb-2 text-center")
 
 # TODO add text field: " ... So beträgt der Abstand zwischen der Gemeinde mit der höchsten und der niedrigsten SGB II Quote im Landkreis "Name" [X] Prozentpunkte und liegt damit [Y] Prozentpunkte über/unter dem deutschen  Durchschnitt
-# # working template for text card (for later use)
-# minmax_card = html.Div(
-#                       [
-#                           dbc.Card(
-#                             dbc.CardBody(
-#                 [
-#                     html.H4("Auf einen Blick", className="card-title"),
-#                     html.P(
-#                         "Some quick example text to build on the card title and "
-#                         "make up the bulk of the card's content.",
-#                         className="card-text",
-#                     ),
-#                 ],
-#     style = {"width": "18rem"}
-#             )
-#                         id="minmax_text",
-#                           )
-#                       ]
-# )
 
 
 dropdown = html.Div(
@@ -146,6 +140,29 @@ dropdown = html.Div(
     className="mb-4",
 )
 
+
+# dynamic html field containing a text statement, cf:
+# https://community.plotly.com/t/changing-html-p-element-with-callback-function/10933,
+# https://stackoverflow.com/questions/65694502/returning-dynamic-text-to-html-p-in-dash,
+# https://stackoverflow.com/questions/71688663/how-to-connect-html-elements-with-dash-callback-in-python
+
+minmax_card = html.Div(
+                       [
+                           dbc.Card(
+                             dbc.CardBody(
+                        [
+                     html.H4("Auf einen Blick",
+                             className="card-title"
+                             ),
+                     html.P(id="minmax_text",
+                            className="card-text",
+                           ),
+                        ],
+                        #style = {"width": "18rem"}
+                                        ),
+                           ),
+                       ],
+)
 
 fig = html.Div(
     [dcc.Graph
@@ -182,9 +199,9 @@ fig4 = html.Div(
 )
 
 # TODO add graph showing distance between min / max values of each Landkreis of the respective Bundesland
+# endregion
 
-
-# layout
+# region create layout
 # In order to develop our layout very easily, we used two types of flexible containers from the dash_bootstrap_components(dbc)
 # library: dbc.Card & dbc.Container:
 
@@ -218,8 +235,9 @@ app.layout = dbc.Container(
     className="dbc",
     style={"height": "100vh"}
 )
+# endregion
 
-
+# region Callback
 @app.callback(
     [
         Output(component_id='example-graph', component_property='figure'),
@@ -229,6 +247,9 @@ app.layout = dbc.Container(
     ],
     Input(component_id='dropdown', component_property='value')
 )
+# endregion
+
+# region Callback function
 def update_graph(selected_region):
     dff = df_soz3[df_soz3.Landkreis == selected_region]
 
@@ -291,7 +312,9 @@ def update_graph(selected_region):
         font_family="Courier New, monospace",
         title_font_family="Courier New, monospace",
         plot_bgcolor="#ffffff",
-# legend positioning and tweaking: https://plotly.com/python/legend/?_ga=2.205267728.1447699042.1673006461-1475463668.1670716474#legend-position, https://plotly.com/python/reference/?_ga=2.205267728.1447699042.1673006461-1475463668.1670716474#layout-legend
+# legend positioning and tweaking:
+# https://plotly.com/python/legend/?_ga=2.205267728.1447699042.1673006461-1475463668.1670716474#legend-position,
+# https://plotly.com/python/reference/?_ga=2.205267728.1447699042.1673006461-1475463668.1670716474#layout-legend
         legend=dict(
             orientation="h",
             y=-0.3,
@@ -315,7 +338,9 @@ def update_graph(selected_region):
         title_font_family="Courier New, monospace",
     )
 
-# tweaking coloraxis of choropleth map: # https://stackoverflow.com/questions/68174188/update-colorbar-coloraxis-position-plotly-python, https://plotly.com/python/reference/layout/coloraxis/
+# tweaking coloraxis of choropleth map:
+# https://stackoverflow.com/questions/68174188/update-colorbar-coloraxis-position-plotly-python,
+# https://plotly.com/python/reference/layout/coloraxis/
     fig4.update_coloraxes(colorbar_orientation="h",
                           colorbar_x=1,
                           colorbar_xanchor="right",
@@ -326,12 +351,35 @@ def update_graph(selected_region):
 
     fig4.update_geos(fitbounds="locations", visible=False)
 
+# calculating range between min/max values in column "2019 SGB II-Quote (%)" of geo_dff:
+# https://www.w3schools.com/python/pandas/ref_df_max.asp
+# https://www.geeksforgeeks.org/accessing-elements-of-a-pandas-series/
 
+    col = "2019 SGB II-Quote (%)"
+    max_col = geo_dff.loc[geo_dff[col].idxmax()]
+    max_gem = max_col["Kommune"]
+    max_val = max_col["2019 SGB II-Quote (%)"].astype(float)
 
-    return fig, fig3, fig4, minmax_card
+    min_col = geo_dff.loc[geo_dff[col].idxmin()]
+    min_gem = min_col["Kommune"]
+    min_val = min_col["2019 SGB II-Quote (%)"].astype(float)
+    range_val = (max_val) - (min_val)
 
+# writing the results in a statement to be passed on towards the dynamic html component
 
+    statement = ("Die Gemeinde mit der höchsten Quote ist ", max_gem, " mit einem Wert von ", max_val,
+          "%. Die Gemeinde mit der niedrigsten Quote in diesem Landkreis ist ", min_gem, " mit einem Wert von ", min_val,
+          "%. Das entspricht einer Spannweite zwischen höchstem und niedrigstem Wert von ", range_val, " Prozentpunkten.")
+
+    return fig, fig3, fig4, statement
+# endregion
+
+# region run server
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,
+                   # mode='external',
+                   # port=3003)
+                   ),
+# endregion
 
-# mode='external', port=3003
+
