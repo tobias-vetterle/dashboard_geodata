@@ -243,6 +243,7 @@ app.layout = dbc.Container(
                         #width=6,
                         xs=10, sm=8, md=5, lg=6, xl=5,
                         style={'overflowY': 'scroll', 'height': 800} # https://community.plotly.com/t/add-scrolling-options-to-plots/9493
+                        # TODO scrollbar und höhe anpassen
                         ),
             ],
             className="h-100, g-6"
