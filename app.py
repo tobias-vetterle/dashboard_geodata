@@ -29,6 +29,7 @@ import numpy as np
 # region read data
 # Sozialdaten einlesen
 df_soz = pd.read_csv("soz_lage_2019.csv", encoding='utf-8-sig', sep=';')
+#df_soz.info()
 # utf-8-sig
 # Geodaten einlesen
 # geo_df = json.loads("gemeinden_simplify200.geojson")
@@ -43,6 +44,8 @@ df_soz2 = df_soz[['Kommune', 'Landkreis', '2019 Kinderarmut (%)',
                   '2019 SGB II-Quote (%)',
                   '2019 ALG II-Quote (%)',
                   '2019 Haushalte mit niedrigem Einkommen (%)',
+                  'Bundesland',
+                  'ARS'
                   ]]
 
 df_soz3 = df_soz2.copy(deep=True)
@@ -69,8 +72,7 @@ df_soz3.astype({"2019 Kinderarmut (%)": 'float64',
                 "2019 SGB II-Quote (%)": 'float64',
                 "2019 ALG II-Quote (%)": 'float64',
                 '2019 Haushalte mit niedrigem Einkommen (%)': 'float64',
-                }) \
-    # .info()
+                })#.info()
 
 # df_soz3.to_csv("df_soz3.csv", sep=';', encoding='utf-8-sig')
 
@@ -140,7 +142,6 @@ dropdown = html.Div(
     className="mb-4",
 )
 
-
 # dynamic html field containing a text statement, cf:
 # https://community.plotly.com/t/changing-html-p-element-with-callback-function/10933,
 # https://stackoverflow.com/questions/65694502/returning-dynamic-text-to-html-p-in-dash,
@@ -170,7 +171,19 @@ fig = html.Div(
         id='example-graph',
         config={'displayModeBar': True},
         #style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
-        style={'height': '40vh'},
+        style={'height': '60vh'},
+    ),
+    ],
+)
+
+## insert dotplot here as fig2 / example-graph2
+fig2 = html.Div(
+    [dcc.Graph
+        (
+        id='example-graph2',
+        config={'displayModeBar': True},
+        #style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
+        style={'height': '100vh'},
     ),
     ],
 )
@@ -181,7 +194,7 @@ fig3 = html.Div(
         id='example-graph3',
         config={'displayModeBar': True},
         #style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
-        style={'height': '40vh'},
+        style={'height': '60vh'},
     ),
     ],
 )
@@ -192,7 +205,7 @@ fig4 = html.Div(
         id='example-graph4',
         config={'displayModeBar': True},
         #style={'width': '80vh', 'height': '70vh', 'display': 'inline-block'}
-        style={'height': '70vh'}
+        style={'height': '100vh'}
 
     ),
     ],
@@ -207,7 +220,11 @@ fig4 = html.Div(
 
 input_and_map = dbc.Card([dropdown, minmax_card, fig4], body=True)
 
-charts = dbc.Card([fig, fig3], body=True)
+chart_dotplot = dbc.Card([fig2], body=True)
+
+chart1 = dbc.Card([fig], body=True)
+
+chart2 = dbc.Card([fig3], body=True)
 
 
 
@@ -215,20 +232,37 @@ app.layout = dbc.Container(
     [
         header,
         dbc.Row
-            (
+        (
             [
                 dbc.Col([input_and_map],
                         #width=6,
                         xs=10, sm=8, md=5, lg=6, xl=5,
                         style={"height": "100%"}
                         ),
-                dbc.Col([charts],
+                dbc.Col([chart_dotplot],
                         #width=6,
                         xs=10, sm=8, md=5, lg=6, xl=5,
-                        style={"height": "100%"}
+                        style={'overflowY': 'scroll', 'height': 800} # https://community.plotly.com/t/add-scrolling-options-to-plots/9493
                         ),
             ],
-            className="h-100"
+            className="h-100, g-6"
+        ),
+# to control space between rows, play around with "margin-top" and "g-x" (unclear how it works exactly)
+        dbc.Row
+        (
+            [
+            dbc.Col([chart1],
+                    # width=6,
+                    xs=10, sm=8, md=5, lg=6, xl=5,
+                    style={"height": "100%", "margin-top": "30px"}
+                    ),
+            dbc.Col([chart2],
+                    # width=6,
+                    xs=10, sm=8, md=5, lg=6, xl=5,
+                    style={"height": "100%", "margin-top": "30px"}
+                    ),
+            ],
+            className="h-100, g-6"
         ),
     ],
     fluid=True,
@@ -237,12 +271,56 @@ app.layout = dbc.Container(
 )
 # endregion
 
+#
+# # region Baustelle dot plot
+# # TODO Sortierung nach Spannweite implementieren
+# # TODO Gemeinde der min max Werte in tooltip anzeigen
+# # creating dynaminc filter variable for Bundesland of selected Landkreis (replace df_soz3 with dff)
+# selected_bl = df_soz3['Bundesland'].loc[df_soz3.index[0]]
+# # filtering df_soz3 with the selected Bundesland
+# dot_df = df_soz3[df_soz3["Bundesland"] == selected_bl]
+# # selecting required columns
+# dot_df1 = dot_df[["Kommune", "Landkreis", "2019 SGB II-Quote (%)"]]
+# # creating two tables for the min and max values of each Landkreis
+# dot_df1_min = dot_df1.astype({"2019 SGB II-Quote (%)": 'float64'}).sort_values("2019 SGB II-Quote (%)").groupby("Landkreis", as_index=False).first()
+# dot_df1_min['minmax']='min'
+# dot_df1_max = dot_df1.astype({"2019 SGB II-Quote (%)": 'float64'}).sort_values("2019 SGB II-Quote (%)", ascending=False).groupby("Landkreis", as_index=False).first()
+# dot_df1_max['minmax']='max'
+# # concating the tables
+# df_dot_minmax = pd.concat([dot_df1_min, dot_df1_max], ignore_index=True, axis=0)
+# df_dot_minmax = df_dot_minmax.sort_values("2019 SGB II-Quote (%)", ascending=False)
+# # ploting data on a dot plot
+# # Use column names of df for the different parameters x, y, color, ...
+#
+#
+# fig2 = px.scatter(df_dot_minmax, x="2019 SGB II-Quote (%)", y="Landkreis", color="minmax",
+#                  title="Spannweite der SGB II Quoten", # hier noch das Bundesland anfügen
+#                  hover_data=['Kommune', "2019 SGB II-Quote (%)"]
+#                  #labels={"salary":"Annual Salary (in thousands)"} # customize axis label
+#                 )
+# fig2.update_traces(marker_size=15)
+#
+# # https://community.plotly.com/t/plotly-colours-list/11730/3
+# # https://plotly.com/python/axes/?_ga=2.145648308.1006701091.1673255542-1435390182.1649168166#styling-and-coloring-axes-and-the-zeroline
+# fig2.update_xaxes(showgrid=True, gridwidth=1, gridcolor='slateblue', griddash='dot')
+# fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='slateblue', griddash='dot')
+#
+# fig2.update_layout(
+#         font_family="Courier New, monospace",
+#         title_font_family="Courier New, monospace",
+#         plot_bgcolor="#ffffff",
+#         )
+# endregion
+
+
+
 # region Callback
 @app.callback(
     [
         Output(component_id='example-graph', component_property='figure'),
         Output(component_id='example-graph3', component_property='figure'),
         Output(component_id='example-graph4', component_property='figure'),
+        Output(component_id='example-graph2', component_property='figure'),
         Output(component_id='minmax_text', component_property='children')
     ],
     Input(component_id='dropdown', component_property='value')
@@ -254,6 +332,9 @@ def update_graph(selected_region):
     dff = df_soz3[df_soz3.Landkreis == selected_region]
 
     geo_dff = geo_df[geo_df.Landkreis == selected_region]
+
+    # selected_bl = dff['Bundesland'].loc[dff.index[0]] #"irgendein Wert aus der Spalte Bundesland in dff"
+    # dot_df = df_soz3 # filtern mit selected_lk
 
     dff.astype({"2019 Kinderarmut (%)": 'float64',
                 "2019 Jugendarmut (%)": 'float64',
@@ -270,6 +351,28 @@ def update_graph(selected_region):
                     "2019 ALG II-Quote (%)": 'float64',
                     '2019 Haushalte mit niedrigem Einkommen (%)': 'float64',
                     })
+
+    # creating dynaminc filter variable for Bundesland of selected Landkreis (replace df_soz3 with dff)
+    selected_bl = dff['Bundesland'].loc[dff.index[0]]
+    # filtering df_soz3 with the selected Bundesland
+    dot_df = df_soz3[df_soz3["Bundesland"] == selected_bl]
+    # selecting required columns
+    dot_df1 = dot_df[["Kommune", "Landkreis", "2019 SGB II-Quote (%)"]]
+    # creating two tables for the min and max values of each Landkreis
+    dot_df1_min = dot_df1.astype({"2019 SGB II-Quote (%)": 'float64'}).sort_values("2019 SGB II-Quote (%)").groupby(
+        "Landkreis", as_index=False).first()
+    dot_df1_min['minmax'] = 'min'
+    dot_df1_max = dot_df1.astype({"2019 SGB II-Quote (%)": 'float64'}).sort_values("2019 SGB II-Quote (%)",
+                                                                                   ascending=False).groupby("Landkreis",
+                                                                                                            as_index=False).first()
+    dot_df1_max['minmax'] = 'max'
+    # concating the tables
+    df_dot_minmax = pd.concat([dot_df1_min, dot_df1_max], ignore_index=True, axis=0)
+    df_dot_minmax = df_dot_minmax.sort_values("2019 SGB II-Quote (%)", ascending=False)
+    # ploting data on a dot plot
+    # Use column names of df for the different parameters x, y, color, ...
+
+
 # manually specifying labels: https://plotly.com/python/figure-labels/
     fig = px.bar(dff,
                  x="Landkreis",
@@ -296,6 +399,24 @@ def update_graph(selected_region):
     )
 
     fig.update_yaxes(type='linear')
+
+    fig2 = px.scatter(df_dot_minmax, x="2019 SGB II-Quote (%)", y="Landkreis", color="minmax",
+                      title="Spannweite der SGB II Quoten",  # hier noch das Bundesland anfügen
+                      hover_data=['Kommune', "2019 SGB II-Quote (%)"],
+                      # labels={"salary":"Annual Salary (in thousands)"} # customize axis label
+                      )
+    fig2.update_traces(marker_size=5)
+
+    # https://community.plotly.com/t/plotly-colours-list/11730/3
+    # https://plotly.com/python/axes/?_ga=2.145648308.1006701091.1673255542-1435390182.1649168166#styling-and-coloring-axes-and-the-zeroline
+    fig2.update_xaxes(showgrid=True, gridwidth=1, gridcolor='slateblue', griddash='dot')
+    fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='slateblue', griddash='dot')
+
+    fig2.update_layout(
+        font_family="Courier New, monospace",
+        title_font_family="Courier New, monospace",
+        plot_bgcolor="#ffffff",
+    )
 
     fig3 = px.bar(dff,
                   x="Landkreis",
@@ -371,7 +492,7 @@ def update_graph(selected_region):
           "%. Die Gemeinde mit der niedrigsten Quote in diesem Landkreis ist ", min_gem, " mit einem Wert von ", min_val,
           "%. Das entspricht einer Spannweite zwischen höchstem und niedrigstem Wert von ", range_val, " Prozentpunkten.")
 
-    return fig, fig3, fig4, statement
+    return fig, fig3, fig4, fig2, statement
 # endregion
 
 # region run server
