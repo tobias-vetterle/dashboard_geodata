@@ -183,7 +183,7 @@ fig2 = html.Div(
         id='example-graph2',
         config={'displayModeBar': True},
         #style={'width': '80vh', 'height': '40vh', 'display': 'inline-block'},
-        style={'height': '100vh'},
+        style={'height': '150vh'},
     ),
     ],
 )
@@ -237,16 +237,16 @@ app.layout = dbc.Container(
                 dbc.Col([input_and_map],
                         #width=6,
                         xs=10, sm=8, md=5, lg=6, xl=5,
-                        style={"height": "100%"}
+                        style={"height": "80%"}
                         ),
                 dbc.Col([chart_dotplot],
                         #width=6,
                         xs=10, sm=8, md=5, lg=6, xl=5,
-                        style={'overflowY': 'scroll', 'height': 800} # https://community.plotly.com/t/add-scrolling-options-to-plots/9493
+                        style={'overflowY': 'scroll', 'height': "1250px"} # https://community.plotly.com/t/add-scrolling-options-to-plots/9493
                         # TODO scrollbar und höhe anpassen
                         ),
             ],
-            className="h-100, g-6"
+            className="vh-50, g-6"
         ),
 # to control space between rows, play around with "margin-top" and "g-x" (unclear how it works exactly)
         dbc.Row
@@ -271,48 +271,6 @@ app.layout = dbc.Container(
     style={"height": "100vh"}
 )
 # endregion
-
-#
-# # region Baustelle dot plot
-# # TODO Sortierung nach Spannweite implementieren
-# # TODO Gemeinde der min max Werte in tooltip anzeigen
-# # creating dynaminc filter variable for Bundesland of selected Landkreis (replace df_soz3 with dff)
-# selected_bl = df_soz3['Bundesland'].loc[df_soz3.index[0]]
-# # filtering df_soz3 with the selected Bundesland
-# dot_df = df_soz3[df_soz3["Bundesland"] == selected_bl]
-# # selecting required columns
-# dot_df1 = dot_df[["Kommune", "Landkreis", "2019 SGB II-Quote (%)"]]
-# # creating two tables for the min and max values of each Landkreis
-# dot_df1_min = dot_df1.astype({"2019 SGB II-Quote (%)": 'float64'}).sort_values("2019 SGB II-Quote (%)").groupby("Landkreis", as_index=False).first()
-# dot_df1_min['minmax']='min'
-# dot_df1_max = dot_df1.astype({"2019 SGB II-Quote (%)": 'float64'}).sort_values("2019 SGB II-Quote (%)", ascending=False).groupby("Landkreis", as_index=False).first()
-# dot_df1_max['minmax']='max'
-# # concating the tables
-# df_dot_minmax = pd.concat([dot_df1_min, dot_df1_max], ignore_index=True, axis=0)
-# df_dot_minmax = df_dot_minmax.sort_values("2019 SGB II-Quote (%)", ascending=False)
-# # ploting data on a dot plot
-# # Use column names of df for the different parameters x, y, color, ...
-#
-#
-# fig2 = px.scatter(df_dot_minmax, x="2019 SGB II-Quote (%)", y="Landkreis", color="minmax",
-#                  title="Spannweite der SGB II Quoten", # hier noch das Bundesland anfügen
-#                  hover_data=['Kommune', "2019 SGB II-Quote (%)"]
-#                  #labels={"salary":"Annual Salary (in thousands)"} # customize axis label
-#                 )
-# fig2.update_traces(marker_size=15)
-#
-# # https://community.plotly.com/t/plotly-colours-list/11730/3
-# # https://plotly.com/python/axes/?_ga=2.145648308.1006701091.1673255542-1435390182.1649168166#styling-and-coloring-axes-and-the-zeroline
-# fig2.update_xaxes(showgrid=True, gridwidth=1, gridcolor='slateblue', griddash='dot')
-# fig2.update_yaxes(showgrid=True, gridwidth=1, gridcolor='slateblue', griddash='dot')
-#
-# fig2.update_layout(
-#         font_family="Courier New, monospace",
-#         title_font_family="Courier New, monospace",
-#         plot_bgcolor="#ffffff",
-#         )
-# endregion
-
 
 
 # region Callback
@@ -458,6 +416,7 @@ def update_graph(selected_region):
     fig4.update_layout(
         font_family="Courier New, monospace",
         title_font_family="Courier New, monospace",
+        margin_t=10
     )
 
 # tweaking coloraxis of choropleth map:
@@ -466,7 +425,7 @@ def update_graph(selected_region):
     fig4.update_coloraxes(colorbar_orientation="h",
                           colorbar_x=1,
                           colorbar_xanchor="right",
-                          colorbar_y=-0.3,
+                          colorbar_y=0.1,
                           colorbar_title_side="top",
                           colorbar_thickness=10
                           )
