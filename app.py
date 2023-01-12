@@ -123,7 +123,6 @@ landkreise = df_soz3['Landkreis'].unique()
 header = html.H4("Sozialdaten auf Gemeindeebene, 2019",
                  className="bg-primary text-white p-3 mb-2 text-center")
 
-# TODO dot plot ergänzen
 
 dropdown = html.Div(
     [
@@ -198,7 +197,6 @@ fig4 = html.Div(
     ],
 )
 
-# TODO add graph showing distance between min / max values of each Landkreis of the respective Bundesland
 # endregion
 
 # region create layout
